@@ -1,80 +1,227 @@
-import type { Request, Response } from 'express';
-import { PostService } from "../services/post-service.js";
+import type {
+    Request,
+    Response
+} from 'express';
 
-const postService = new PostService();
+import {
+    PostService
+} from '../services/post-service.js';
+
+const postService =
+    new PostService();
 
 export class PostController {
 
-    async create(req: Request, res: Response) {
+    async create(
+        req: Request,
+        res: Response
+    ): Promise<Response> {
+
         try {
-            const { title, description, imageBase64, mimeType, address } = req.body;
 
-            if (!imageBase64 || !mimeType) {
-                return res.status(400).json({ error: "Image and MIME type are required" });
-            }
-
-            if (!imageBase64.match(/^[A-Za-z0-9+/=]+$/)) {
-                return res.status(400).json({ error: "Base64 invalid" });
-            }
-
-            const base64Clean = imageBase64.replace(/^data:.+;base64,/, "");
-
-            const post = await postService.createPost({
+            const {
                 title,
                 description,
-                imageBase64: base64Clean,
-                mimeType,
-                address,
-            });
+                address
+            } = req.body;
 
-            return res.status(201).json(post);
-        } catch (error: any) {
-            return res.status(500).json({
-                message: error.message,
-            });
+            if (!req.file) {
+
+                return res
+                    .status(400)
+                    .json({
+
+                        error:
+                        'Imagem obrigatória'
+
+                    });
+
+            }
+
+            const imageUrl =
+                `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+
+            const post =
+                await postService
+                    .createPost({
+
+                        title,
+
+                        description,
+
+                        address,
+
+                        imageUrl
+
+                    });
+
+            return res
+                .status(201)
+                .json(post);
+
+        } catch (
+            error: unknown
+        ) {
+
+            return res
+                .status(500)
+                .json({
+
+                    message:
+
+                        error instanceof Error
+                            ? error.message
+                            : 'Erro interno'
+
+                });
+
         }
+
     }
 
-    async getAll(req: Request, res: Response) {
+    async getAll(
+        _req: Request,
+        res: Response
+    ): Promise<Response> {
+
         try {
-            const posts = await postService.getAllPosts();
-            return res.status(200).json(posts);
-        } catch (error: any) {
-            return res.status(500).json({
-                message: error.message,
-            });
+
+            const posts =
+                await postService
+                    .getAllPosts();
+
+            return res
+                .status(200)
+                .json(posts);
+
+        } catch (
+            error: unknown
+        ) {
+
+            return res
+                .status(500)
+                .json({
+
+                    message:
+
+                        error instanceof Error
+                            ? error.message
+                            : 'Erro interno'
+
+                });
+
         }
+
     }
 
-    async getById(req: Request, res: Response) {
+    async getById(
+        req: Request,
+        res: Response
+    ): Promise<Response> {
+
         try {
-            const { id } = req.params;
+
+            const id =
+                String(
+                    req.params.id
+                );
+
             if (!id) {
-                return res.status(400).json({ error: "Post ID is required" });
+
+                return res
+                    .status(400)
+                    .json({
+
+                        error:
+                        'Post ID obrigatório'
+
+                    });
+
             }
-            const post = await postService.getPostById(id as string);
-            return res.status(200).json(post);
-        } catch (error: any) {
-            return res.status(500).json({
-                message: error.message,
-            });
+
+            const post =
+                await postService
+                    .getPostById(
+                        id
+                    );
+
+            return res
+                .status(200)
+                .json(post);
+
+        } catch (
+            error: unknown
+        ) {
+
+            return res
+                .status(500)
+                .json({
+
+                    message:
+
+                        error instanceof Error
+                            ? error.message
+                            : 'Erro interno'
+
+                });
+
         }
+
     }
 
-    async likePost(req: Request, res: Response) {
+    async likePost(
+        req: Request,
+        res: Response
+    ): Promise<Response> {
+
         try {
-            const { postId } = req.params;
+
+            const postId =
+                String(
+                    req.params.postId
+                );
+
             if (!postId) {
-                return res.status(400).json({ error: "Post ID is required" });
+
+                return res
+                    .status(400)
+                    .json({
+
+                        error:
+                        'Post ID obrigatório'
+
+                    });
+
             }
 
-            const result = await postService.likePost(postId as string);
-            return res.status(200).json(result);
-        } catch (error: any) {
-            return res.status(500).json({
-                message: error.message,
-            });
-        }
-    }
-}
+            const result =
+                await postService
+                    .likePost(
+                        postId
+                    );
 
+            return res
+                .status(200)
+                .json(result);
+
+        } catch (
+            error: unknown
+        ) {
+
+            return res
+                .status(500)
+                .json({
+
+                    message:
+
+                        error instanceof Error
+                            ? error.message
+                            : 'Erro interno'
+
+                });
+
+        }
+
+    }
+
+}

@@ -10,7 +10,15 @@
     "module": "NodeNext",
     "target": "ES2020",
     "moduleResolution": "NodeNext",
-    "types": ["node"],
+    "types": [
+        "node",
+        "multer"
+      ],
+
+      "typeRoots": [
+        "./node_modules/@types",
+        "./src/@types"
+      ],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -38,7 +46,6 @@
     "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
   }
