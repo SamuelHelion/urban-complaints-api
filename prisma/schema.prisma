@@ -25,8 +25,7 @@ model Post {
   id          String   @id @default(uuid())
   title       String
   description String
-  imageBase64 String
-  mimeType    String
+  imageUrl    String   // ← substituiu imageBase64 + mimeType
   likes       Int      @default(0)
   address     String
   createdAt   DateTime @default(now())
