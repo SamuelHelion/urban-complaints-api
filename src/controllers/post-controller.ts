@@ -38,8 +38,7 @@ export class PostController {
 
             }
 
-            const imageUrl =
-                `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+            const imageUrl = req.file.path;
 
             const post =
                 await postService
